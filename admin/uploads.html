@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GUDU Admin — Uploads</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="shared.css" />
+    <style>
+      .file-type-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-text">GUDU</div>
+        <div class="logo-sub">Admin Console</div>
+      </div>
+      <nav class="nav">
+        <div class="nav-label">Overview</div>
+        <a href="dashboard.html" class="nav-item">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          Dashboard
+        </a>
+        <div class="nav-label">Management</div>
+        <a href="users.html" class="nav-item">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          Users
+        </a>
+        <a href="requests.html" class="nav-item">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          Delivery Requests
+        </a>
+        <a href="vehicles.html" class="nav-item">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="1" y="3" width="15" height="13" rx="1" />
+            <path d="M16 8h4l3 3v5h-7V8z" />
+            <circle cx="5.5" cy="18.5" r="2.5" />
+            <circle cx="18.5" cy="18.5" r="2.5" />
+          </svg>
+          Vehicles
+        </a>
+        <div class="nav-label">Finance</div>
+        <a href="wallets.html" class="nav-item">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+            <path d="M18 12a2 2 0 0 0 0 4h4v-4z" />
+          </svg>
+          Wallets
+        </a>
+        <a href="banks.html" class="nav-item">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="3" y1="22" x2="21" y2="22" />
+            <line x1="6" y1="18" x2="6" y2="11" />
+            <line x1="10" y1="18" x2="10" y2="11" />
+            <line x1="14" y1="18" x2="14" y2="11" />
+            <line x1="18" y1="18" x2="18" y2="11" />
+            <polygon points="12 2 20 7 4 7" />
+          </svg>
+          Bank Details
+        </a>
+        <!-- <div class="nav-label">System</div>
+        <a href="uploads.html" class="nav-item active">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Uploads
+        </a> -->
+      </nav>
+      <div class="sidebar-footer">
+        <button
+          class="logout-btn"
+          onclick="if (confirm('Log out?')) alert('Logged out.');"
+        >
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title">Uploads</div>
+        <div class="topbar-right">
+          <span style="font-size: 12px; color: var(--muted); font-weight: 500"
+            >Admin</span
+          >
+          <div class="avatar">A</div>
+        </div>
+      </div>
+
+      <div class="page-content">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px">
+          <!-- Left: Upload zone -->
+          <div>
+            <div
+              style="
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: var(--muted);
+                font-weight: 700;
+                margin-bottom: 12px;
+              "
+            >
+              Upload Files
+            </div>
+            <div
+              class="upload-zone"
+              id="dropZone"
+              onclick="document.getElementById('fileInput').click()"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event)"
+            >
+              <div style="margin-bottom: 12px; color: var(--accent)">
+                <svg
+                  width="42"
+                  height="42"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+              </div>
+              <div class="upload-text">Drop files here or click to browse</div>
+              <div class="upload-hint" style="margin-top: 6px">
+                Supports PDF, PNG, JPG, XLSX, CSV — max 10MB each
+              </div>
+            </div>
+            <input
+              type="file"
+              id="fileInput"
+              multiple
+              style="display: none"
+              onchange="handleFileSelect(this.files)"
+            />
+            <div class="upload-list" id="uploadList"></div>
+          </div>
+
+          <!-- Right: File listing -->
+          <div>
+            <div
+              style="
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: var(--muted);
+                font-weight: 700;
+                margin-bottom: 12px;
+              "
+            >
+              Uploaded Files
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Date</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="uploadedFiles">
+                  <tr>
+                    <td style="padding-right: 4px">
+                      <div
+                        class="file-type-icon"
+                        style="background: #dcfce7; color: #15803d"
+                      >
+                        CSV
+                      </div>
+                    </td>
+                    <td style="font-weight: 500">users_export.csv</td>
+                    <td style="color: var(--muted)">14 KB</td>
+                    <td style="color: var(--muted); font-size: 12px">
+                      Mar 7, 2026
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-danger btn-sm"
+                        onclick="removeRow(this)"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-right: 4px">
+                      <div
+                        class="file-type-icon"
+                        style="background: #dcfce7; color: #15803d"
+                      >
+                        XLS
+                      </div>
+                    </td>
+                    <td style="font-weight: 500">vehicles_data.xlsx</td>
+                    <td style="color: var(--muted)">28 KB</td>
+                    <td style="color: var(--muted); font-size: 12px">
+                      Mar 5, 2026
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-danger btn-sm"
+                        onclick="removeRow(this)"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-right: 4px">
+                      <div
+                        class="file-type-icon"
+                        style="background: #fee2e2; color: #b91c1c"
+                      >
+                        PDF
+                      </div>
+                    </td>
+                    <td style="font-weight: 500">march_report.pdf</td>
+                    <td style="color: var(--muted)">142 KB</td>
+                    <td style="color: var(--muted); font-size: 12px">
+                      Mar 3, 2026
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-danger btn-sm"
+                        onclick="removeRow(this)"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function getExt(name) {
+        return name.split(".").pop().toUpperCase().slice(0, 3);
+      }
+      function getIconStyle(ext) {
+        const map = {
+          CSV: "background:#dcfce7;color:#15803d",
+          XLS: "background:#dcfce7;color:#15803d",
+          PDF: "background:#fee2e2;color:#b91c1c",
+          PNG: "background:#dbeafe;color:#1d4ed8",
+          JPG: "background:#dbeafe;color:#1d4ed8"
+        };
+        return map[ext] || "background:#f1f5f9;color:#475569";
+      }
+      function handleFileSelect(files) {
+        [...files].forEach(addUploadItem);
+      }
+      function addUploadItem(file) {
+        const list = document.getElementById("uploadList");
+        const size = (file.size / 1024).toFixed(1) + " KB";
+        const ext = getExt(file.name);
+        const item = document.createElement("div");
+        item.className = "upload-item";
+        item.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="file-type-icon" style="${getIconStyle(ext)}">${ext}</div>
+        <span style="font-weight:500">${file.name}</span>
+      </div>
+      <span style="color:var(--muted);font-size:12px">${size}</span>`;
+        list.appendChild(item);
+        // Also add to table
+        const tbody = document.getElementById("uploadedFiles");
+        const tr = document.createElement("tr");
+        const now = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric"
+        });
+        tr.innerHTML = `<td style="padding-right:4px"><div class="file-type-icon" style="${getIconStyle(ext)}">${ext}</div></td><td style="font-weight:500">${file.name}</td><td style="color:var(--muted)">${size}</td><td style="color:var(--muted);font-size:12px">${now}</td><td><button class="btn btn-danger btn-sm" onclick="removeRow(this)">Delete</button></td>`;
+        tbody.insertBefore(tr, tbody.firstChild);
+      }
+      function handleDragOver(e) {
+        e.preventDefault();
+        document.getElementById("dropZone").classList.add("drag-over");
+      }
+      function handleDragLeave() {
+        document.getElementById("dropZone").classList.remove("drag-over");
+      }
+      function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById("dropZone").classList.remove("drag-over");
+        handleFileSelect(e.dataTransfer.files);
+      }
+
+      function logout() {
+  if (!confirm('Log out?')) return;
+  localStorage.removeItem('adminToken');
+  window.location.href = '../login.html';
+}
+     
+    </script>
+  </body>
+</html>

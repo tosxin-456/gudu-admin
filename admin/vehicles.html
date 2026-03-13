@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GUDU Admin — Vehicles</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+  .nav-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99; }
+  .nav-overlay.open { display:block; }
+  .hamburger { display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text1);align-items:center; }
+  @media (max-width: 768px) {
+    .hamburger { display:flex; }
+    .sidebar { position:fixed;left:-260px;top:0;height:100%;z-index:100;transition:left .25s ease; }
+    .sidebar.open { left:0;box-shadow:4px 0 24px rgba(0,0,0,0.15); }
+    .main { margin-left:0 !important;width:100%; }
+    .topbar { padding:0 16px; }
+    .page-content { padding:16px !important; }
+    .section-header { flex-direction:column !important;align-items:flex-start !important;gap:12px !important; }
+    .table-toolbar { flex-direction:column !important;align-items:stretch !important;gap:10px !important; }
+    .search-box { width:100%; }
+    .search-box input { width:100%; }
+    .table-wrap { overflow-x:auto; }
+    table { min-width:580px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-overlay" id="navOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><div class="logo-text">GUDU</div><div class="logo-sub">Admin Console</div></div>
+  <nav class="nav">
+    <div class="nav-label">Overview</div>
+    <a href="dashboard.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <div class="nav-label">Management</div>
+    <a href="users.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users</a>
+    <a href="requests.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Delivery Requests</a>
+    <a href="vehicles.html" class="nav-item active" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Vehicles</a>
+    <div class="nav-label">Finance</div>
+    <a href="wallets.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Wallets</a>
+    <a href="banks.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>Bank Details</a>
+    <!-- <div class="nav-label">System</div>
+    <a href="uploads.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Uploads</a> -->
+  </nav>
+  <div class="sidebar-footer">
+<button class="logout-btn" onclick="logout()">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+  Logout
+</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-title">Vehicles</div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:var(--muted);font-weight:500">Admin</span>
+      <div class="avatar">A</div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="section-header">
+      <div>
+        <div class="section-title" style="font-size:18px">Registered Vehicles</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Verify and manage fleet vehicles</div>
+      </div>
+    </div>
+
+    <div id="pendingAlert" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;margin-bottom:20px;align-items:center;gap:10px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span id="pendingAlertText" style="font-size:13px;color:#92400e;font-weight:500"></span>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <div class="search-box">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search vehicles..." oninput="filterTable(this,'vehTable')"/>
+        </div>
+      </div>
+      <table id="vehTable">
+        <thead>
+          <tr><th>ID</th><th>User ID</th><th>Make</th><th>Model</th><th>Color</th><th>Plate</th><th>Verified</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="vehiclesBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '../api';
+
+  function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('navOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('navOverlay').classList.remove('open'); document.body.style.overflow=''; }
+  function filterTable(input, tableId) {
+    const q = input.value.toLowerCase();
+    document.getElementById(tableId).querySelectorAll('tbody tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+  }
+
+  async function setVerified(id, value) {
+    const label = value ? 'verify' : 'unverify';
+    if (!confirm(`${label.charAt(0).toUpperCase()+label.slice(1)} this vehicle?`)) return;
+    try {
+      const res = await fetch(`${API}/updateVehicle.php`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ id, isVerified: value })
+      });
+      const data = await res.json();
+      if (data.success) loadVehicles();
+      else alert('Failed: ' + (data.message||''));
+    } catch(e) { alert('Server error'); }
+  }
+
+  async function removeVehicle(id) {
+    if (!confirm('Remove this vehicle?')) return;
+    try {
+      const res = await fetch(`${API}/deleteVehicle.php`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) loadVehicles();
+      else alert('Failed: ' + (data.message||''));
+    } catch(e) { alert('Server error'); }
+  }
+
+  async function loadVehicles() {
+    try {
+      const res = await fetch(`${API}/getVehicles.php`);
+      const vehicles = await res.json();
+      const tbody = document.getElementById('vehiclesBody');
+      tbody.innerHTML = '';
+      let unverifiedCount = 0;
+      vehicles.forEach(v => {
+        const isVerified = v.isVerified == 1;
+        if (!isVerified) unverifiedCount++;
+        const verifiedBadge = isVerified
+          ? `<span class="badge badge-green">Verified</span>`
+          : `<span class="badge badge-red">Unverified</span>`;
+        const actionBtns = isVerified
+          ? `<div style="display:flex;gap:6px">
+               <button class="btn btn-outline btn-sm" onclick="setVerified(${v.id},0)">Unverify</button>
+               <button class="btn btn-danger btn-sm" onclick="removeVehicle(${v.id})">Remove</button>
+             </div>`
+          : `<div style="display:flex;gap:6px">
+               <button class="btn btn-primary btn-sm" onclick="setVerified(${v.id},1)">Verify</button>
+               <button class="btn btn-danger btn-sm" onclick="removeVehicle(${v.id})">Remove</button>
+             </div>`;
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td style="color:var(--muted);font-size:12px">#${v.id}</td>
+            <td><a href="users.html" style="color:var(--accent);font-weight:600;text-decoration:none">#${v.userId}</a></td>
+            <td style="font-weight:600">${v.make??'—'}</td>
+            <td>${v.model??'—'}</td>
+            <td>${v.color??'—'}</td>
+            <td><span style="font-family:monospace;font-size:12px;background:#f0f5f0;padding:3px 7px;border-radius:4px">${v.plateNumber??'—'}</span></td>
+            <td>${verifiedBadge}</td>
+            <td>${actionBtns}</td>
+          </tr>`);
+      });
+      const alert = document.getElementById('pendingAlert');
+      if (unverifiedCount > 0) {
+        alert.style.display = 'flex';
+        document.getElementById('pendingAlertText').textContent = `${unverifiedCount} vehicle${unverifiedCount!==1?'s':''} pending verification`;
+      } else {
+        alert.style.display = 'none';
+      }
+    } catch(e) { console.error('Error loading vehicles:', e); }
+  }
+
+  function logout() {
+  if (!confirm('Log out?')) return;
+  localStorage.removeItem('adminToken');
+  window.location.href = '../login.html';
+}
+
+  document.addEventListener('DOMContentLoaded', loadVehicles);
+</script>
+</body>
+</html>
