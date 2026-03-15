@@ -4,93 +4,91 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GUDU Admin — Wallets</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="shared.css" />
     <style>
-      .nav-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 99;
+      .nav-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99; }
+      .nav-overlay.open { display:block; }
+      .hamburger { display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text1);align-items:center; }
+
+      /* Scrollable modal */
+      .modal-overlay {
+        align-items: flex-start;
+        padding: 24px 16px;
+        overflow-y: auto;
       }
-      .nav-overlay.open {
-        display: block;
+      .modal {
+        max-height: none;
+        margin: auto;
       }
-      .hamburger {
-        display: none;
-        background: none;
+
+      .modal-divider {
+        grid-column: 1/-1;
         border: none;
-        cursor: pointer;
-        padding: 4px;
-        color: var(--text1);
-        align-items: center;
+        border-top: 1px solid var(--border);
+        margin: 4px 0 0;
       }
-      /* Hero card stacks on mobile */
-      .hero-card-inner {
+      .modal-section-label {
+        grid-column: 1/-1;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--muted);
+        font-weight: 700;
+        padding-top: 4px;
+      }
+
+      /* Hero card */
+      .hero-card-inner { display:flex;justify-content:space-between;align-items:center; }
+
+      /* Transaction list */
+      .txn-list {
+        grid-column: 1/-1;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 320px;
+        overflow-y: auto;
+        padding-right: 2px;
       }
+      .txn-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: #f9fafb;
+        border: 1px solid var(--border);
+        gap: 12px;
+      }
+      .txn-row:hover { background: #f0f5f0; }
+      .txn-left { display:flex;flex-direction:column;gap:2px;flex:1;min-width:0; }
+      .txn-desc { font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+      .txn-meta { font-size:11px;color:var(--muted); }
+      .txn-right { display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0; }
+      .txn-amount-credit { font-size:14px;font-weight:700;color:#059669; }
+      .txn-amount-debit  { font-size:14px;font-weight:700;color:#dc2626; }
+      .txn-empty { text-align:center;padding:24px;color:var(--muted);font-size:13px; }
+
+      /* Adjust modal form */
+      #adjustModal .modal { max-width: 420px; width: 100%; }
+
       @media (max-width: 768px) {
-        .hamburger {
-          display: flex;
-        }
-        .sidebar {
-          position: fixed;
-          left: -260px;
-          top: 0;
-          height: 100%;
-          z-index: 100;
-          transition: left 0.25s ease;
-        }
-        .sidebar.open {
-          left: 0;
-          box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
-        }
-        .main {
-          margin-left: 0 !important;
-          width: 100%;
-        }
-        .topbar {
-          padding: 0 16px;
-        }
-        .page-content {
-          padding: 16px !important;
-        }
-        .section-header {
-          flex-direction: column !important;
-          align-items: flex-start !important;
-          gap: 12px !important;
-        }
-        .table-toolbar {
-          flex-direction: column !important;
-          align-items: stretch !important;
-          gap: 10px !important;
-        }
-        .search-box {
-          width: 100%;
-        }
-        .search-box input {
-          width: 100%;
-        }
-        .table-wrap {
-          overflow-x: auto;
-        }
-        table {
-          min-width: 460px;
-        }
-        .hero-card-inner {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 16px;
-        }
-        #heroTotal {
-          font-size: 32px !important;
-        }
+        .hamburger { display:flex; }
+        .sidebar { position:fixed;left:-260px;top:0;height:100%;z-index:100;transition:left .25s ease; }
+        .sidebar.open { left:0;box-shadow:4px 0 24px rgba(0,0,0,0.15); }
+        .main { margin-left:0 !important;width:100%; }
+        .topbar { padding:0 16px; }
+        .page-content { padding:16px !important; }
+        .section-header { flex-direction:column !important;align-items:flex-start !important;gap:12px !important; }
+        .table-toolbar { flex-direction:column !important;align-items:stretch !important;gap:10px !important; }
+        .search-box { width:100%; }
+        .search-box input { width:100%; }
+        .table-wrap { overflow-x:auto; }
+        table { min-width:460px; }
+        .hero-card-inner { flex-direction:column;align-items:flex-start;gap:16px; }
+        #heroTotal { font-size:32px !important; }
+        .modal-overlay { padding:12px 8px; }
       }
     </style>
   </head>
@@ -104,234 +102,62 @@
       </div>
       <nav class="nav">
         <div class="nav-label">Overview</div>
-        <a href="dashboard.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" /></svg
-          >Dashboard</a
-        >
+        <a href="dashboard.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
         <div class="nav-label">Management</div>
-        <a href="users.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg
-          >Users</a
-        >
-        <a href="requests.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" /></svg
-          >Delivery Requests</a
-        >
-        <a href="vehicles.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="1" y="3" width="15" height="13" rx="1" />
-            <path d="M16 8h4l3 3v5h-7V8z" />
-            <circle cx="5.5" cy="18.5" r="2.5" />
-            <circle cx="18.5" cy="18.5" r="2.5" /></svg
-          >Vehicles</a
-        >
+        <a href="users.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users</a>
+        <a href="requests.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Delivery Requests</a>
+        <a href="vehicles.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Vehicles</a>
+        <a href="licenses.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Driver Licenses</a>
         <div class="nav-label">Finance</div>
-        <a href="wallets.html" class="nav-item active" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
-            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
-            <path d="M18 12a2 2 0 0 0 0 4h4v-4z" /></svg
-          >Wallets</a
-        >
-        <a href="banks.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <line x1="3" y1="22" x2="21" y2="22" />
-            <line x1="6" y1="18" x2="6" y2="11" />
-            <line x1="10" y1="18" x2="10" y2="11" />
-            <line x1="14" y1="18" x2="14" y2="11" />
-            <line x1="18" y1="18" x2="18" y2="11" />
-            <polygon points="12 2 20 7 4 7" /></svg
-          >Bank Details</a
-        >
-        <!-- <div class="nav-label">System</div>
-        <a href="uploads.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" /></svg
-          >Uploads</a
-        > -->
+        <a href="wallets.html" class="nav-item active" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Wallets</a>
+        <a href="banks.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>Bank Details</a>
       </nav>
       <div class="sidebar-footer">
-<button class="logout-btn" onclick="logout()">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-    <polyline points="16 17 21 12 16 7"/>
-    <line x1="21" y1="12" x2="9" y2="12"/>
-  </svg>
-  Logout
-</button>
+        <button class="logout-btn" onclick="logout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
       </div>
     </aside>
 
     <div class="main">
       <div class="topbar">
-        <button
-          class="hamburger"
-          onclick="openSidebar()"
-          aria-label="Open menu"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
+        <button class="hamburger" onclick="openSidebar()" aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
         <div class="topbar-title">Wallets</div>
         <div class="topbar-right">
-          <span style="font-size: 12px; color: var(--muted); font-weight: 500"
-            >Admin</span
-          >
+          <span style="font-size:12px;color:var(--muted);font-weight:500">Admin</span>
           <div class="avatar">A</div>
         </div>
       </div>
 
       <div class="page-content">
-        <div
-          style="
-            background: linear-gradient(
-              135deg,
-              var(--accent3) 0%,
-              var(--accent2) 100%
-            );
-            border-radius: 16px;
-            padding: 28px 32px;
-            margin-bottom: 24px;
-            color: #fff;
-          "
-        >
+
+        <!-- Hero balance card -->
+        <div style="background:linear-gradient(135deg,var(--accent3) 0%,var(--accent2) 100%);border-radius:16px;padding:28px 32px;margin-bottom:24px;color:#fff">
           <div class="hero-card-inner">
             <div>
-              <div
-                style="
-                  font-size: 11px;
-                  text-transform: uppercase;
-                  letter-spacing: 2px;
-                  opacity: 0.7;
-                  font-weight: 600;
-                  margin-bottom: 8px;
-                "
-              >
-                Total Platform Balance
-              </div>
-              <div
-                id="heroTotal"
-                style="
-                  font-family: &quot;Instrument Serif&quot;, serif;
-                  font-size: 42px;
-                  line-height: 1;
-                "
-              >
-                —
-              </div>
-              <div
-                id="heroWalletCount"
-                style="font-size: 12px; opacity: 0.6; margin-top: 6px"
-              >
-                Loading...
-              </div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;opacity:0.7;font-weight:600;margin-bottom:8px">Total Platform Balance</div>
+              <div id="heroTotal" style="font-family:'Instrument Serif',serif;font-size:42px;line-height:1">—</div>
+              <div id="heroWalletCount" style="font-size:12px;opacity:0.6;margin-top:6px">Loading...</div>
             </div>
-            <div style="display: flex; gap: 24px">
-              <div style="text-align: right">
-                <div
-                  style="
-                    font-size: 10px;
-                    opacity: 0.6;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    margin-bottom: 3px;
-                  "
-                >
-                  Active
-                </div>
-                <div id="heroActive" style="font-size: 26px; font-weight: 800">
-                  —
-                </div>
+            <div style="display:flex;gap:24px">
+              <div style="text-align:right">
+                <div style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Active</div>
+                <div id="heroActive" style="font-size:26px;font-weight:800">—</div>
               </div>
-              <div style="text-align: right">
-                <div
-                  style="
-                    font-size: 10px;
-                    opacity: 0.6;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    margin-bottom: 3px;
-                  "
-                >
-                  Suspended
-                </div>
-                <div
-                  id="heroSuspended"
-                  style="font-size: 26px; font-weight: 800; color: #fca5a5"
-                >
-                  —
-                </div>
+              <div style="text-align:right">
+                <div style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Suspended</div>
+                <div id="heroSuspended" style="font-size:26px;font-weight:800;color:#fca5a5">—</div>
               </div>
             </div>
           </div>
@@ -339,41 +165,26 @@
 
         <div class="section-header">
           <div>
-            <div class="section-title" style="font-size: 18px">All Wallets</div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 2px">
-              Manage user wallet balances and status
-            </div>
+            <div class="section-title" style="font-size:18px">All Wallets</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Manage user wallet balances and status</div>
           </div>
         </div>
 
         <div class="table-wrap">
           <div class="table-toolbar">
             <div class="search-box">
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--muted)"
-                stroke-width="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search wallets..."
-                oninput="filterTable(this, 'walTable')"
-              />
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search wallets..." oninput="filterTable(this,'walTable')" />
             </div>
           </div>
           <table id="walTable">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>User ID</th>
+                <th>User</th>
                 <th>Balance</th>
                 <th>Currency</th>
+                <th>Txns</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -384,13 +195,74 @@
       </div>
     </div>
 
-    <!-- Adjust Modal -->
+    <!-- Wallet Detail + Transaction History Modal -->
+    <div class="modal-overlay" id="walletModal">
+      <div class="modal" style="max-width:540px;width:100%">
+        <div class="modal-title">Wallet Details</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+
+          <!-- User info -->
+          <div class="modal-section-label">User</div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Name</div>
+            <div id="wUserName" style="font-weight:600"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">User ID</div>
+            <div id="wUserId" style="font-family:monospace;font-weight:600"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Email</div>
+            <div id="wEmail" style="word-break:break-all;font-size:13px"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Phone</div>
+            <div id="wPhone" style="font-size:13px"></div>
+          </div>
+
+          <!-- Wallet info -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Wallet</div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Balance</div>
+            <div id="wBalance" style="font-size:20px;font-weight:800;color:var(--accent)"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Currency</div>
+            <div id="wCurrency"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Status</div>
+            <div id="wStatus"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Wallet ID</div>
+            <div id="wWalletId" style="font-family:monospace;font-size:12px;color:var(--muted)"></div>
+          </div>
+
+          <!-- Transaction history -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Transaction History</div>
+          <div class="txn-list" id="wTxnList"></div>
+
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-outline" onclick="closeModal('walletModal')">Close</button>
+          <button class="btn btn-outline" id="wSuspendBtn" onclick="modalToggleStatus()"></button>
+          <!-- <button class="btn btn-primary" onclick="openAdjustFromModal()">Adjust Balance</button> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Adjust Balance Modal -->
     <div class="modal-overlay" id="adjustModal">
-      <div class="modal">
+      <div class="modal" style="max-width:420px;width:100%">
         <div class="modal-title">Adjust Wallet Balance</div>
         <div class="form-group">
-          <label class="form-label">User ID</label
-          ><input class="form-input" id="adjustUserId" type="text" readonly />
+          <label class="form-label">User</label>
+          <input class="form-input" id="adjustUserLabel" type="text" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Action</label>
@@ -400,200 +272,274 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Amount (₦)</label
-          ><input
-            class="form-input"
-            id="adjustAmount"
-            type="number"
-            placeholder="0"
-            min="1"
-          />
+          <label class="form-label">Amount (₦)</label>
+          <input class="form-input" id="adjustAmount" type="number" placeholder="0" min="1" />
         </div>
         <div class="form-group">
-          <label class="form-label">Reason / Note</label
-          ><input
-            class="form-input"
-            id="adjustReason"
-            type="text"
-            placeholder="Reason for adjustment..."
-          />
+          <label class="form-label">Reason / Note</label>
+          <input class="form-input" id="adjustReason" type="text" placeholder="Reason for adjustment..." />
         </div>
         <div class="modal-actions">
-          <button class="btn btn-outline" onclick="closeModal('adjustModal')">
-            Cancel
-          </button>
-          <button class="btn btn-primary" onclick="applyAdjustment()">
-            Apply
-          </button>
+          <button class="btn btn-outline" onclick="closeModal('adjustModal')">Cancel</button>
+          <button class="btn btn-primary" onclick="applyAdjustment()">Apply</button>
         </div>
       </div>
     </div>
 
     <script>
-      const API = "../api";
-      let adjustingUserId = null;
+      const API = '../api';
 
-      function openSidebar() {
-        document.getElementById("sidebar").classList.add("open");
-        document.getElementById("navOverlay").classList.add("open");
-        document.body.style.overflow = "hidden";
-      }
-      function closeSidebar() {
-        document.getElementById("sidebar").classList.remove("open");
-        document.getElementById("navOverlay").classList.remove("open");
-        document.body.style.overflow = "";
-      }
-      function openModal(id) {
-        document.getElementById(id).classList.add("open");
-      }
-      function closeModal(id) {
-        document.getElementById(id).classList.remove("open");
-      }
-      document.querySelectorAll(".modal-overlay").forEach((o) =>
-        o.addEventListener("click", (e) => {
-          if (e.target === o) o.classList.remove("open");
-        })
+      let currentUser   = null; // full user object with wallet + transactions
+      let adjustingUserId  = null;
+      let adjustingWalletId = null;
+
+      function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('navOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+      function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('navOverlay').classList.remove('open'); document.body.style.overflow=''; }
+      function openModal(id) { document.getElementById(id).classList.add('open'); }
+      function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+      document.querySelectorAll('.modal-overlay').forEach(o =>
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
       );
+
       function filterTable(input, tableId) {
         const q = input.value.toLowerCase();
-        document
-          .getElementById(tableId)
-          .querySelectorAll("tbody tr")
-          .forEach((r) => {
-            r.style.display = r.textContent.toLowerCase().includes(q)
-              ? ""
-              : "none";
-          });
-      }
-      function fmt(amount) {
-        return amount != null
-          ? "₦" + Number(amount).toLocaleString("en-NG")
-          : "₦0";
+        document.getElementById(tableId).querySelectorAll('tbody tr').forEach(r => {
+          r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
       }
 
-      function openAdjustModal(userId) {
-        adjustingUserId = userId;
-        document.getElementById("adjustUserId").value = "#" + userId;
-        document.getElementById("adjustAmount").value = "";
-        document.getElementById("adjustReason").value = "";
-        openModal("adjustModal");
+      function fmt(amount) {
+        return amount != null ? '₦' + Number(amount).toLocaleString('en-NG') : '₦0';
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const d = new Date(dateStr);
+        return isNaN(d) ? dateStr : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      }
+
+      function txnTypeBadge(type) {
+        const t = (type || '').toUpperCase();
+        if (t === 'CREDIT') return `<span class="badge badge-green">Credit</span>`;
+        if (t === 'DEBIT')  return `<span class="badge badge-red">Debit</span>`;
+        return `<span class="badge badge-gray">${type || '—'}</span>`;
+      }
+
+      function txnStatusBadge(status) {
+        const s = (status || '').toUpperCase();
+        if (s === 'SUCCESS' || s === 'SUCCESSFUL') return `<span class="badge badge-green">Success</span>`;
+        if (s === 'FAILED')  return `<span class="badge badge-red">Failed</span>`;
+        if (s === 'PENDING') return `<span class="badge badge-yellow">Pending</span>`;
+        return `<span class="badge badge-gray">${status || '—'}</span>`;
+      }
+
+      // Open wallet detail modal
+      function viewWallet(user) {
+        currentUser = user;
+        const w = user.wallet;
+
+        // User info
+        document.getElementById('wUserName').textContent = user.fullName || '—';
+        document.getElementById('wUserId').textContent   = `#${user.id}`;
+        document.getElementById('wEmail').textContent    = user.email || '—';
+        document.getElementById('wPhone').textContent    = user.phoneNumber || '—';
+
+        // Wallet info
+        if (w) {
+          document.getElementById('wBalance').textContent  = fmt(w.balance);
+          document.getElementById('wCurrency').innerHTML   = `<span class="badge badge-gray">${w.currency ?? 'NGN'}</span>`;
+          document.getElementById('wWalletId').textContent = `#${w.id}`;
+          const status = (w.status || '').toUpperCase();
+          document.getElementById('wStatus').innerHTML = status === 'ACTIVE'
+            ? `<span class="badge badge-green">Active</span>`
+            : `<span class="badge badge-red">Suspended</span>`;
+
+          // Suspend / Restore button
+          const suspendBtn = document.getElementById('wSuspendBtn');
+          if (status === 'ACTIVE') {
+            suspendBtn.textContent = 'Suspend';
+            suspendBtn.className = 'btn btn-danger';
+          } else {
+            suspendBtn.textContent = 'Restore';
+            suspendBtn.className = 'btn btn-primary';
+          }
+        } else {
+          document.getElementById('wBalance').textContent  = '—';
+          document.getElementById('wCurrency').textContent = '—';
+          document.getElementById('wWalletId').textContent = '—';
+          document.getElementById('wStatus').textContent   = '—';
+          document.getElementById('wSuspendBtn').style.display = 'none';
+        }
+
+        // Transactions
+        const txnList = document.getElementById('wTxnList');
+        const txns = user.transactions || [];
+        if (txns.length === 0) {
+          txnList.innerHTML = '<div class="txn-empty">No transactions yet</div>';
+        } else {
+          txnList.innerHTML = txns.map(txn => {
+            const isCredit = (txn.type || '').toUpperCase() === 'CREDIT';
+            const amtClass = isCredit ? 'txn-amount-credit' : 'txn-amount-debit';
+            const amtPrefix = isCredit ? '+' : '−';
+            return `
+              <div class="txn-row">
+                <div class="txn-left">
+                  <div class="txn-desc">${txn.description || txn.reference || '—'}</div>
+                  <div class="txn-meta">${formatDate(txn.createdAt)} · Ref: ${txn.reference || '—'}</div>
+                </div>
+                <div class="txn-right">
+                  <div class="${amtClass}">${amtPrefix}${fmt(txn.amount)}</div>
+                  <div style="display:flex;gap:4px">${txnTypeBadge(txn.type)}${txnStatusBadge(txn.status)}</div>
+                </div>
+              </div>`;
+          }).join('');
+        }
+
+        openModal('walletModal');
+      }
+
+      // Toggle suspend/restore from wallet modal
+      async function modalToggleStatus() {
+        if (!currentUser || !currentUser.wallet) return;
+        const w = currentUser.wallet;
+        const currentStatus = (w.status || '').toUpperCase();
+        const newStatus = currentStatus === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+        const label = newStatus === 'SUSPENDED' ? 'Suspend' : 'Restore';
+        if (!confirm(`${label} this wallet?`)) return;
+        try {
+          const res = await fetch(`${API}/updateWallet.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'updateStatus', id: w.id, status: newStatus })
+          });
+          const data = await res.json();
+          if (data.success) { closeModal('walletModal'); loadWallets(); }
+          else alert('Failed: ' + (data.message || ''));
+        } catch(e) { alert('Server error'); }
+      }
+
+      // Open adjust modal from wallet modal
+      function openAdjustFromModal() {
+        if (!currentUser) return;
+        adjustingUserId   = currentUser.id;
+        adjustingWalletId = currentUser.wallet?.id;
+        document.getElementById('adjustUserLabel').value = `${currentUser.fullName || '—'} (#${currentUser.id})`;
+        document.getElementById('adjustAmount').value = '';
+        document.getElementById('adjustReason').value = '';
+        openModal('adjustModal');
+      }
+
+      // Open adjust modal directly from table
+      function openAdjustModal(user) {
+        currentUser       = user;
+        adjustingUserId   = user.id;
+        adjustingWalletId = user.wallet?.id;
+        document.getElementById('adjustUserLabel').value = `${user.fullName || '—'} (#${user.id})`;
+        document.getElementById('adjustAmount').value = '';
+        document.getElementById('adjustReason').value = '';
+        openModal('adjustModal');
       }
 
       async function applyAdjustment() {
-        const type = document.getElementById("adjustType").value;
-        const amount = parseFloat(
-          document.getElementById("adjustAmount").value
-        );
-        if (!amount || amount <= 0) {
-          alert("Enter a valid amount");
-          return;
-        }
+        const type   = document.getElementById('adjustType').value;
+        const amount = parseFloat(document.getElementById('adjustAmount').value);
+        const reason = document.getElementById('adjustReason').value;
+        if (!amount || amount <= 0) { alert('Enter a valid amount'); return; }
         try {
           const res = await fetch(`${API}/updateWallet.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "adjustBalance",
-              userId: adjustingUserId,
-              type,
-              amount
-            })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'adjustBalance', userId: adjustingUserId, type, amount, reason })
           });
           const data = await res.json();
-          if (data.success) {
-            closeModal("adjustModal");
-            loadWallets();
-          } else alert("Failed: " + (data.message || ""));
-        } catch (e) {
-          alert("Server error");
-        }
+          if (data.success) { closeModal('adjustModal'); loadWallets(); }
+          else alert('Failed: ' + (data.message || ''));
+        } catch(e) { alert('Server error'); }
       }
 
-      async function setWalletStatus(id, status) {
-        const label = status === "ACTIVE" ? "restore" : "suspend";
-        if (
-          !confirm(
-            `${label.charAt(0).toUpperCase() + label.slice(1)} this wallet?`
-          )
-        )
-          return;
+      async function setWalletStatus(walletId, status) {
+        const label = status === 'ACTIVE' ? 'Restore' : 'Suspend';
+        if (!confirm(`${label} this wallet?`)) return;
         try {
           const res = await fetch(`${API}/updateWallet.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "updateStatus", id, status })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'updateStatus', id: walletId, status })
           });
           const data = await res.json();
           if (data.success) loadWallets();
-          else alert("Failed: " + (data.message || ""));
-        } catch (e) {
-          alert("Server error");
-        }
+          else alert('Failed: ' + (data.message || ''));
+        } catch(e) { alert('Server error'); }
       }
 
       async function loadWallets() {
         try {
           const res = await fetch(`${API}/wallets.php`);
-          const wallets = await res.json();
-          const tbody = document.getElementById("walletsBody");
-          tbody.innerHTML = "";
-          let totalBalance = 0,
-            activeCount = 0,
-            suspendedCount = 0;
-          wallets.forEach((w) => {
-            const status = (w.status || "").toUpperCase();
+          const users = await res.json();
+          const tbody = document.getElementById('walletsBody');
+          tbody.innerHTML = '';
+          let totalBalance = 0, activeCount = 0, suspendedCount = 0;
+
+          users.forEach(user => {
+            const w = user.wallet;
+            if (!w) return; // skip users with no wallet
+
+            const status  = (w.status || '').toUpperCase();
             const balance = parseFloat(w.balance) || 0;
             totalBalance += balance;
-            if (status === "ACTIVE") activeCount++;
-            else if (status === "SUSPENDED") suspendedCount++;
-            const statusBadge =
-              status === "ACTIVE"
-                ? `<span class="badge badge-green">Active</span>`
-                : `<span class="badge badge-red">Suspended</span>`;
-            const balStyle =
-              balance < 500
-                ? "font-weight:700;font-size:15px;color:#dc2626"
-                : "font-weight:700;font-size:15px";
-            const actionBtns =
-              status === "SUSPENDED"
-                ? `<div style="display:flex;gap:6px">
-               <button class="btn btn-primary btn-sm" onclick="setWalletStatus(${w.id},'ACTIVE')">Restore</button>
-               <button class="btn btn-outline btn-sm" onclick="openAdjustModal(${w.userId})">Adjust</button>
-             </div>`
-                : `<div style="display:flex;gap:6px">
-               <button class="btn btn-danger btn-sm" onclick="setWalletStatus(${w.id},'SUSPENDED')">Suspend</button>
-               <button class="btn btn-outline btn-sm" onclick="openAdjustModal(${w.userId})">Adjust</button>
-             </div>`;
-            tbody.insertAdjacentHTML(
-              "beforeend",
-              `
-          <tr>
-            <td style="color:var(--muted);font-size:12px">#${w.id}</td>
-            <td><a href="users.html" style="color:var(--accent);font-weight:600;text-decoration:none">#${w.userId}</a></td>
-            <td style="${balStyle}">${fmt(w.balance)}</td>
-            <td><span class="badge badge-gray">${w.currency ?? "NGN"}</span></td>
-            <td>${statusBadge}</td>
-            <td>${actionBtns}</td>
-          </tr>`
-            );
+            if (status === 'ACTIVE') activeCount++;
+            else if (status === 'SUSPENDED') suspendedCount++;
+
+            const statusBadge = status === 'ACTIVE'
+              ? `<span class="badge badge-green">Active</span>`
+              : `<span class="badge badge-red">Suspended</span>`;
+
+            const balStyle = balance < 500
+              ? 'font-weight:700;font-size:15px;color:#dc2626'
+              : 'font-weight:700;font-size:15px';
+
+            const txnCount = (user.transactions || []).length;
+
+            const actionBtns = status === 'SUSPENDED'
+              ? `<div style="display:flex;gap:6px">
+                   <button class="btn btn-outline btn-sm" onclick='viewWallet(${JSON.stringify(user)})'>View</button>
+                   <button class="btn btn-primary btn-sm" onclick="setWalletStatus(${w.id},'ACTIVE')">Restore</button>
+                 </div>`
+              : `<div style="display:flex;gap:6px">
+                   <button class="btn btn-outline btn-sm" onclick='viewWallet(${JSON.stringify(user)})'>View</button>
+                   <button class="btn btn-danger btn-sm" onclick="setWalletStatus(${w.id},'SUSPENDED')">Suspend</button>
+                 </div>`;
+
+            tbody.insertAdjacentHTML('beforeend', `
+              <tr>
+                <td style="color:var(--muted);font-size:12px">#${w.id}</td>
+                <td>
+                  <div style="font-weight:600">${user.fullName ?? '—'}</div>
+                  <div style="font-size:11px;color:var(--muted)">#${user.id}</div>
+                </td>
+                <td style="${balStyle}">${fmt(w.balance)}</td>
+                <td><span class="badge badge-gray">${w.currency ?? 'NGN'}</span></td>
+                <td style="font-size:12px;color:var(--muted);font-weight:600">${txnCount}</td>
+                <td>${statusBadge}</td>
+                <td>${actionBtns}</td>
+              </tr>`);
           });
-          document.getElementById("heroTotal").textContent = fmt(totalBalance);
-          document.getElementById("heroWalletCount").textContent =
-            `Across ${wallets.length} wallet${wallets.length !== 1 ? "s" : ""}`;
-          document.getElementById("heroActive").textContent = activeCount;
-          document.getElementById("heroSuspended").textContent = suspendedCount;
-        } catch (e) {
-          console.error("Error loading wallets:", e);
-        }
+
+          document.getElementById('heroTotal').textContent        = fmt(totalBalance);
+          document.getElementById('heroWalletCount').textContent  = `Across ${users.length} wallet${users.length !== 1 ? 's' : ''}`;
+          document.getElementById('heroActive').textContent       = activeCount;
+          document.getElementById('heroSuspended').textContent    = suspendedCount;
+        } catch(e) { console.error('Error loading wallets:', e); }
       }
 
       function logout() {
-        if (!confirm("Log out?")) return;
-        localStorage.removeItem("adminToken");
-        window.location.href = "../login.html";
+        if (!confirm('Log out?')) return;
+        localStorage.removeItem('adminToken');
+        window.location.href = '../login.html';
       }
 
-      document.addEventListener("DOMContentLoaded", loadWallets);
+      document.addEventListener('DOMContentLoaded', loadWallets);
     </script>
   </body>
 </html>

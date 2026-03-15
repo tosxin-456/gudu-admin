@@ -1,25 +1,38 @@
 <?php
 
 header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+
 require "./config/db.php";
 
 $sql = "SELECT 
-            id,
-            rideType,
-            packageId,
-            senderName,
-            senderPhoneNumber,
-            recipientName,
-            recipientPhoneNumber,
-            vehicleType,
-            packageSize,
-            customerOfferAmount,
-            finalAmount,
-            status,
-            pickupDateTime,
-            createdAt
-        FROM delivery_requests
-        ORDER BY createdAt DESC";
+            dr.id,
+            dr.rideType,
+            dr.packageId,
+            dr.senderName,
+            dr.senderPhoneNumber,
+            dr.recipientName,
+            dr.recipientPhoneNumber,
+            dr.vehicleType,
+            dr.packageSize,
+            dr.packageImageUrl,
+            dr.customerOfferAmount,
+            dr.finalAmount,
+            dr.status,
+            dr.pickupDateTime,
+            dr.createdAt,
+
+            dr.selectedDriverId,
+            u.fullName AS driverName,
+            u.phoneNumber AS driverPhoneNumber,
+            u.profilePicture AS driverProfilePicture
+
+        FROM delivery_requests dr
+
+        LEFT JOIN users u 
+        ON dr.selectedDriverId = u.id
+
+        ORDER BY dr.createdAt DESC";
 
 $result = $conn->query($sql);
 

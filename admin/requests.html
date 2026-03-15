@@ -4,95 +4,69 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GUDU Admin — Delivery Requests</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="shared.css" />
     <style>
-      .nav-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 99;
+      .nav-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99; }
+      .nav-overlay.open { display:block; }
+      .hamburger { display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text1);align-items:center; }
+
+      .modal-overlay {
+        align-items: flex-start;
+        padding: 24px 16px;
+        overflow-y: auto;
       }
-      .nav-overlay.open {
-        display: block;
-      }
-      .hamburger {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-        color: var(--text1);
-        align-items: center;
+      .modal {
+        max-height: none;
+        margin: auto;
       }
 
-      /* Status strip: wrap on small screens */
-      .status-strip {
-        display: flex;
-        gap: 14px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
+      .status-strip { display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap; }
+      .status-strip > div { flex:1;min-width:120px; }
+
+      .pkg-image-wrap { grid-column:1/-1;margin-top:4px; }
+      .pkg-image-wrap img {
+        width:100%;max-height:220px;object-fit:cover;
+        border-radius:8px;border:1px solid var(--border);display:block;
       }
-      .status-strip > div {
-        flex: 1;
-        min-width: 120px;
+      .pkg-image-placeholder {
+        width:100%;height:80px;background:#f4f4f4;
+        border:1px dashed var(--border);border-radius:8px;
+        display:flex;align-items:center;justify-content:center;
+        font-size:12px;color:var(--muted);
+      }
+
+      .modal-divider {
+        grid-column: 1/-1;
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 4px 0 0;
+      }
+      .modal-section-label {
+        grid-column: 1/-1;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--muted);
+        font-weight: 700;
+        padding-top: 4px;
       }
 
       @media (max-width: 768px) {
-        .hamburger {
-          display: flex;
-        }
-        .sidebar {
-          position: fixed;
-          left: -260px;
-          top: 0;
-          height: 100%;
-          z-index: 100;
-          transition: left 0.25s ease;
-        }
-        .sidebar.open {
-          left: 0;
-          box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
-        }
-        .main {
-          margin-left: 0 !important;
-          width: 100%;
-        }
-        .topbar {
-          padding: 0 16px;
-        }
-        .page-content {
-          padding: 16px !important;
-        }
-        .section-header {
-          flex-direction: column !important;
-          align-items: flex-start !important;
-          gap: 12px !important;
-        }
-        .table-toolbar {
-          flex-direction: column !important;
-          align-items: stretch !important;
-          gap: 10px !important;
-        }
-        .search-box {
-          width: 100%;
-        }
-        .search-box input {
-          width: 100%;
-        }
-        .table-wrap {
-          overflow-x: auto;
-        }
-        table {
-          min-width: 620px;
-        }
-        .status-strip > div {
-          min-width: calc(50% - 7px);
-        }
+        .hamburger { display:flex; }
+        .sidebar { position:fixed;left:-260px;top:0;height:100%;z-index:100;transition:left .25s ease; }
+        .sidebar.open { left:0;box-shadow:4px 0 24px rgba(0,0,0,0.15); }
+        .main { margin-left:0 !important;width:100%; }
+        .topbar { padding:0 16px; }
+        .page-content { padding:16px !important; }
+        .section-header { flex-direction:column !important;align-items:flex-start !important;gap:12px !important; }
+        .table-toolbar { flex-direction:column !important;align-items:stretch !important;gap:10px !important; }
+        .search-box { width:100%; }
+        .search-box input { width:100%; }
+        .table-wrap { overflow-x:auto; }
+        table { min-width:620px; }
+        .status-strip > div { min-width:calc(50% - 7px); }
+        .modal-overlay { padding:12px 8px; }
       }
     </style>
   </head>
@@ -106,317 +80,81 @@
       </div>
       <nav class="nav">
         <div class="nav-label">Overview</div>
-        <a href="dashboard.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" /></svg
-          >Dashboard</a
-        >
+        <a href="dashboard.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
         <div class="nav-label">Management</div>
-        <a href="users.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg
-          >Users</a
-        >
-        <a href="requests.html" class="nav-item active" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" /></svg
-          >Delivery Requests</a
-        >
-        <a href="vehicles.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="1" y="3" width="15" height="13" rx="1" />
-            <path d="M16 8h4l3 3v5h-7V8z" />
-            <circle cx="5.5" cy="18.5" r="2.5" />
-            <circle cx="18.5" cy="18.5" r="2.5" /></svg
-          >Vehicles</a
-        >
+        <a href="users.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users</a>
+        <a href="requests.html" class="nav-item active" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Delivery Requests</a>
+        <a href="vehicles.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Vehicles</a>
+        <a href="licenses.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Driver Licenses</a>
         <div class="nav-label">Finance</div>
-        <a href="wallets.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
-            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
-            <path d="M18 12a2 2 0 0 0 0 4h4v-4z" /></svg
-          >Wallets</a
-        >
-        <a href="banks.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <line x1="3" y1="22" x2="21" y2="22" />
-            <line x1="6" y1="18" x2="6" y2="11" />
-            <line x1="10" y1="18" x2="10" y2="11" />
-            <line x1="14" y1="18" x2="14" y2="11" />
-            <line x1="18" y1="18" x2="18" y2="11" />
-            <polygon points="12 2 20 7 4 7" /></svg
-          >Bank Details</a
-        >
-        <!-- <div class="nav-label">System</div>
-        <a href="uploads.html" class="nav-item" onclick="closeSidebar()"
-          ><svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" /></svg
-          >Uploads</a
-        > -->
+        <a href="wallets.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Wallets</a>
+        <a href="banks.html" class="nav-item" onclick="closeSidebar()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>Bank Details</a>
       </nav>
       <div class="sidebar-footer">
-<button class="logout-btn" onclick="logout()">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-    <polyline points="16 17 21 12 16 7"/>
-    <line x1="21" y1="12" x2="9" y2="12"/>
-  </svg>
-  Logout
-</button>
+        <button class="logout-btn" onclick="logout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
       </div>
     </aside>
 
     <div class="main">
       <div class="topbar">
-        <button
-          class="hamburger"
-          onclick="openSidebar()"
-          aria-label="Open menu"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
+        <button class="hamburger" onclick="openSidebar()" aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
         <div class="topbar-title">Delivery Requests</div>
         <div class="topbar-right">
-          <span style="font-size: 12px; color: var(--muted); font-weight: 500"
-            >Admin</span
-          >
+          <span style="font-size:12px;color:var(--muted);font-weight:500">Admin</span>
           <div class="avatar">A</div>
         </div>
       </div>
 
       <div class="page-content">
+
+        <!-- Status strip -->
         <div class="status-strip">
-          <div
-            style="
-              background: #fff;
-              border: 1px solid var(--border);
-              border-radius: 10px;
-              padding: 14px 20px;
-              border-top: 3px solid #d97706;
-            "
-          >
-            <div
-              style="
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: var(--muted);
-                font-weight: 700;
-                margin-bottom: 4px;
-              "
-            >
-              Pending
-            </div>
-            <div
-              id="countPending"
-              style="font-size: 22px; font-weight: 800; color: #d97706"
-            >
-              —
-            </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 20px;border-top:3px solid #d97706">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;margin-bottom:4px">Pending</div>
+            <div id="countPending" style="font-size:22px;font-weight:800;color:#d97706">—</div>
           </div>
-          <div
-            style="
-              background: #fff;
-              border: 1px solid var(--border);
-              border-radius: 10px;
-              padding: 14px 20px;
-              border-top: 3px solid #0369a1;
-            "
-          >
-            <div
-              style="
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: var(--muted);
-                font-weight: 700;
-                margin-bottom: 4px;
-              "
-            >
-              In Transit
-            </div>
-            <div
-              id="countInTransit"
-              style="font-size: 22px; font-weight: 800; color: #0369a1"
-            >
-              —
-            </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 20px;border-top:3px solid #0369a1">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;margin-bottom:4px">In Transit</div>
+            <div id="countInTransit" style="font-size:22px;font-weight:800;color:#0369a1">—</div>
           </div>
-          <div
-            style="
-              background: #fff;
-              border: 1px solid var(--border);
-              border-radius: 10px;
-              padding: 14px 20px;
-              border-top: 3px solid #059669;
-            "
-          >
-            <div
-              style="
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: var(--muted);
-                font-weight: 700;
-                margin-bottom: 4px;
-              "
-            >
-              Delivered
-            </div>
-            <div
-              id="countDelivered"
-              style="font-size: 22px; font-weight: 800; color: #059669"
-            >
-              —
-            </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 20px;border-top:3px solid #059669">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;margin-bottom:4px">Delivered</div>
+            <div id="countDelivered" style="font-size:22px;font-weight:800;color:#059669">—</div>
           </div>
-          <div
-            style="
-              background: #fff;
-              border: 1px solid var(--border);
-              border-radius: 10px;
-              padding: 14px 20px;
-              border-top: 3px solid var(--accent);
-            "
-          >
-            <div
-              style="
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: var(--muted);
-                font-weight: 700;
-                margin-bottom: 4px;
-              "
-            >
-              Total
-            </div>
-            <div
-              id="countTotal"
-              style="font-size: 22px; font-weight: 800; color: var(--accent)"
-            >
-              —
-            </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 20px;border-top:3px solid var(--accent)">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;margin-bottom:4px">Total</div>
+            <div id="countTotal" style="font-size:22px;font-weight:800;color:var(--accent)">—</div>
           </div>
         </div>
 
         <div class="section-header">
           <div>
-            <div class="section-title" style="font-size: 18px">
-              All Requests
-            </div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 2px">
-              Track and manage delivery requests
-            </div>
+            <div class="section-title" style="font-size:18px">All Requests</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Track and manage delivery requests</div>
           </div>
         </div>
 
         <div class="table-wrap">
           <div class="table-toolbar">
             <div class="search-box">
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--muted)"
-                stroke-width="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search requests..."
-                oninput="filterTable(this, 'reqTable')"
-              />
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search requests..." oninput="filterTable(this,'reqTable')" />
             </div>
-            <button
-              class="btn btn-outline btn-sm"
-              onclick="exportCSV('reqTable', 'requests')"
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
+            <button class="btn btn-outline btn-sm" onclick="exportCSV('reqTable','requests')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Export CSV
             </button>
           </div>
@@ -441,150 +179,94 @@
 
     <!-- View / Edit Request Modal -->
     <div class="modal-overlay" id="requestModal">
-      <div class="modal">
+      <div class="modal" style="max-width:500px;width:100%">
         <div class="modal-title">Request Details</div>
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-          "
-        >
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+
+          <!-- Package info -->
+          <div class="modal-section-label">Package Info</div>
+
           <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Package ID
-            </div>
-            <div
-              id="mPkgId"
-              style="font-weight: 600; font-family: monospace"
-            ></div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Package ID</div>
+            <div id="mPkgId" style="font-weight:600;font-family:monospace"></div>
           </div>
           <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Ride Type
-            </div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Ride Type</div>
             <div id="mRideType"></div>
           </div>
           <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Sender
-            </div>
-            <div id="mSender"></div>
-          </div>
-          <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Sender Phone
-            </div>
-            <div id="mSenderPhone"></div>
-          </div>
-          <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Recipient
-            </div>
-            <div id="mRecipient"></div>
-          </div>
-          <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Recipient Phone
-            </div>
-            <div id="mRecipientPhone"></div>
-          </div>
-          <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Vehicle
-            </div>
-            <div id="mVehicle"></div>
-          </div>
-          <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Package Size
-            </div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Package Size</div>
             <div id="mPkgSize"></div>
           </div>
           <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Offer Amount
-            </div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Vehicle Type</div>
+            <div id="mVehicle"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Offer Amount</div>
             <div id="mOfferAmt"></div>
           </div>
           <div>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--muted);
-                font-weight: 600;
-                margin-bottom: 3px;
-              "
-            >
-              Final Amount
-            </div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Final Amount</div>
             <div id="mFinalAmt"></div>
           </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Pickup Date/Time</div>
+            <div id="mPickupDateTime"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Created</div>
+            <div id="mCreatedAt"></div>
+          </div>
+
+          <!-- Package image -->
+          <div class="pkg-image-wrap">
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">Package Image</div>
+            <div id="mPkgImageContainer"></div>
+          </div>
+
+          <!-- Sender / Recipient -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Sender & Recipient</div>
+
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Sender</div>
+            <div id="mSender"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Sender Phone</div>
+            <div id="mSenderPhone"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Recipient</div>
+            <div id="mRecipient"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Recipient Phone</div>
+            <div id="mRecipientPhone"></div>
+          </div>
+
+          <!-- Driver -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Assigned Driver</div>
+
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Driver Name</div>
+            <div id="mDriverName"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Driver Phone</div>
+            <div id="mDriverPhone"></div>
+          </div>
+          <div style="grid-column:1/-1">
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">Driver Photo</div>
+            <div id="mDriverPicContainer"></div>
+          </div>
+
         </div>
+
+        <!-- Status update -->
         <div class="form-group">
           <label class="form-label">Update Status</label>
           <select class="form-input" id="mStatusSelect">
@@ -595,180 +277,177 @@
           </select>
         </div>
         <div class="modal-actions">
-          <button class="btn btn-outline" onclick="closeModal('requestModal')">
-            Close
-          </button>
-          <button class="btn btn-primary" onclick="saveRequestStatus()">
-            Save Status
-          </button>
+          <button class="btn btn-outline" onclick="closeModal('requestModal')">Close</button>
+          <button class="btn btn-primary" onclick="saveRequestStatus()">Save Status</button>
         </div>
       </div>
     </div>
 
     <script>
-      const API = "../api";
+      const API = '../api';
+      const IMAGE_URL =
+        window.location.hostname === 'localhost'
+          ? 'http://localhost:6543'
+          : 'https://gudu.teechaa.com';
+
       let currentRequestId = null;
 
-      function openSidebar() {
-        document.getElementById("sidebar").classList.add("open");
-        document.getElementById("navOverlay").classList.add("open");
-        document.body.style.overflow = "hidden";
-      }
-      function closeSidebar() {
-        document.getElementById("sidebar").classList.remove("open");
-        document.getElementById("navOverlay").classList.remove("open");
-        document.body.style.overflow = "";
-      }
-      function openModal(id) {
-        document.getElementById(id).classList.add("open");
-      }
-      function closeModal(id) {
-        document.getElementById(id).classList.remove("open");
-      }
-      document.querySelectorAll(".modal-overlay").forEach((o) =>
-        o.addEventListener("click", (e) => {
-          if (e.target === o) o.classList.remove("open");
-        })
+      function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('navOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+      function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('navOverlay').classList.remove('open'); document.body.style.overflow=''; }
+      function openModal(id) { document.getElementById(id).classList.add('open'); }
+      function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+      document.querySelectorAll('.modal-overlay').forEach(o =>
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
       );
 
       function filterTable(input, tableId) {
         const q = input.value.toLowerCase();
-        document
-          .getElementById(tableId)
-          .querySelectorAll("tbody tr")
-          .forEach((r) => {
-            r.style.display = r.textContent.toLowerCase().includes(q)
-              ? ""
-              : "none";
-          });
+        document.getElementById(tableId).querySelectorAll('tbody tr').forEach(r => {
+          r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
       }
+
       function exportCSV(tableId, name) {
         const table = document.getElementById(tableId);
-        const rows = [...table.querySelectorAll("tr")];
-        const csv = rows
-          .map((r) =>
-            [...r.querySelectorAll("th,td")]
-              .slice(0, -1)
-              .map((c) => `"${c.textContent.trim()}"`)
-              .join(",")
-          )
-          .join("\n");
-        const a = document.createElement("a");
-        a.href = "data:text/csv," + encodeURIComponent(csv);
-        a.download = name + "_export.csv";
+        const rows = [...table.querySelectorAll('tr')];
+        const csv = rows.map(r =>
+          [...r.querySelectorAll('th,td')].slice(0,-1).map(c => `"${c.textContent.trim()}"`).join(',')
+        ).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv,' + encodeURIComponent(csv);
+        a.download = name + '_export.csv';
         a.click();
       }
+
       function getStatusBadge(status) {
-        const s = (status || "").toUpperCase();
-        if (s === "PENDING")
-          return `<span class="badge badge-yellow">Pending</span>`;
-        if (s === "IN_TRANSIT" || s === "INTRANSIT")
-          return `<span class="badge badge-blue">In Transit</span>`;
-        if (s === "DELIVERED")
-          return `<span class="badge badge-green">Delivered</span>`;
-        if (s === "CANCELLED")
-          return `<span class="badge badge-red">Cancelled</span>`;
-        return `<span class="badge badge-gray">${status || "—"}</span>`;
+        const s = (status || '').toUpperCase();
+        if (s === 'PENDING')   return `<span class="badge badge-yellow">Pending</span>`;
+        if (s === 'IN_TRANSIT' || s === 'INTRANSIT') return `<span class="badge badge-blue">In Transit</span>`;
+        if (s === 'DELIVERED') return `<span class="badge badge-green">Delivered</span>`;
+        if (s === 'CANCELLED') return `<span class="badge badge-red">Cancelled</span>`;
+        return `<span class="badge badge-gray">${status || '—'}</span>`;
       }
+
       function fmt(amount) {
-        return amount ? "₦" + Number(amount).toLocaleString("en-NG") : "—";
+        return amount ? '₦' + Number(amount).toLocaleString('en-NG') : '—';
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const d = new Date(dateStr);
+        return isNaN(d) ? dateStr : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      }
+
+      function buildModalImage(containerId, path, altText) {
+        const container = document.getElementById(containerId);
+        if (path) {
+          const cleanPath = path.replace(/^\/+/, '');
+          const img = document.createElement('img');
+          img.style.cssText = 'width:100%;max-height:200px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block';
+          img.src = `${IMAGE_URL}/${cleanPath}`;
+          img.alt = altText;
+          img.onerror = function () {
+            this.parentElement.innerHTML = '<div class="pkg-image-placeholder">Image could not be loaded</div>';
+          };
+          container.innerHTML = '';
+          container.appendChild(img);
+        } else {
+          container.innerHTML = '<div class="pkg-image-placeholder">No image uploaded</div>';
+        }
       }
 
       function viewRequest(req) {
         currentRequestId = req.id;
-        document.getElementById("mPkgId").textContent = req.packageId ?? "—";
-        document.getElementById("mRideType").textContent = req.rideType ?? "—";
-        document.getElementById("mSender").textContent = req.senderName ?? "—";
-        document.getElementById("mSenderPhone").textContent =
-          req.senderPhoneNumber ?? "—";
-        document.getElementById("mRecipient").textContent =
-          req.recipientName ?? "—";
-        document.getElementById("mRecipientPhone").textContent =
-          req.recipientPhoneNumber ?? "—";
-        document.getElementById("mVehicle").textContent =
-          req.vehicleType ?? "—";
-        document.getElementById("mPkgSize").textContent =
-          req.packageSize ?? "—";
-        document.getElementById("mOfferAmt").textContent = fmt(
-          req.customerOfferAmount
-        );
-        document.getElementById("mFinalAmt").textContent = fmt(req.finalAmount);
-        const s = (req.status || "").toUpperCase();
-        document.getElementById("mStatusSelect").value = [
-          "PENDING",
-          "IN_TRANSIT",
-          "DELIVERED",
-          "CANCELLED"
-        ].includes(s)
-          ? s
-          : "PENDING";
-        openModal("requestModal");
+
+        // Package info
+        document.getElementById('mPkgId').textContent         = req.packageId ?? '—';
+        document.getElementById('mRideType').textContent      = req.rideType ?? '—';
+        document.getElementById('mPkgSize').textContent       = req.packageSize ?? '—';
+        document.getElementById('mVehicle').textContent       = req.vehicleType ?? '—';
+        document.getElementById('mOfferAmt').textContent      = fmt(req.customerOfferAmount);
+        document.getElementById('mFinalAmt').textContent      = fmt(req.finalAmount);
+        document.getElementById('mPickupDateTime').textContent = formatDate(req.pickupDateTime);
+        document.getElementById('mCreatedAt').textContent     = formatDate(req.createdAt);
+
+        // Sender / Recipient
+        document.getElementById('mSender').textContent        = req.senderName ?? '—';
+        document.getElementById('mSenderPhone').textContent   = req.senderPhoneNumber ?? '—';
+        document.getElementById('mRecipient').textContent     = req.recipientName ?? '—';
+        document.getElementById('mRecipientPhone').textContent = req.recipientPhoneNumber ?? '—';
+
+        // Driver
+        document.getElementById('mDriverName').textContent  = req.driverName ?? 'No driver assigned';
+        document.getElementById('mDriverPhone').textContent = req.driverPhoneNumber ?? '—';
+
+        // Images
+        buildModalImage('mPkgImageContainer',  req.packageImageUrl,       'Package image');
+        buildModalImage('mDriverPicContainer', req.driverProfilePicture,  'Driver photo');
+
+        // Status select
+        const s = (req.status || '').toUpperCase();
+        document.getElementById('mStatusSelect').value =
+          ['PENDING','IN_TRANSIT','DELIVERED','CANCELLED'].includes(s) ? s : 'PENDING';
+
+        openModal('requestModal');
       }
 
       async function saveRequestStatus() {
-        const status = document.getElementById("mStatusSelect").value;
+        const status = document.getElementById('mStatusSelect').value;
         try {
           const res = await fetch(`${API}/updateRequestStatus.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: currentRequestId, status })
           });
           const data = await res.json();
-          if (data.success) {
-            closeModal("requestModal");
-            loadRequests();
-          } else alert("Failed to update: " + (data.message || ""));
-        } catch (e) {
-          alert("Server error");
-        }
+          if (data.success) { closeModal('requestModal'); loadRequests(); }
+          else alert('Failed to update: ' + (data.message || ''));
+        } catch(e) { alert('Server error'); }
       }
 
       async function loadRequests() {
         try {
           const res = await fetch(`${API}/delivery_requests.php`);
           const requests = await res.json();
-          const tbody = document.getElementById("requestsBody");
-          tbody.innerHTML = "";
-          let pending = 0,
-            inTransit = 0,
-            delivered = 0;
-          requests.forEach((req) => {
-            const s = (req.status || "").toUpperCase();
-            if (s === "PENDING") pending++;
-            else if (s === "IN_TRANSIT" || s === "INTRANSIT") inTransit++;
-            else if (s === "DELIVERED") delivered++;
+          const tbody = document.getElementById('requestsBody');
+          tbody.innerHTML = '';
+          let pending = 0, inTransit = 0, delivered = 0;
+
+          requests.forEach(req => {
+            const s = (req.status || '').toUpperCase();
+            if (s === 'PENDING') pending++;
+            else if (s === 'IN_TRANSIT' || s === 'INTRANSIT') inTransit++;
+            else if (s === 'DELIVERED') delivered++;
+
             const amount = req.finalAmount || req.customerOfferAmount;
-            tbody.insertAdjacentHTML(
-              "beforeend",
-              `
-          <tr>
-            <td style="color:var(--muted);font-size:12px">#${req.id}</td>
-            <td><span style="font-weight:600;font-family:monospace;font-size:12px;background:#f0f5f0;padding:3px 7px;border-radius:4px">${req.packageId ?? "—"}</span></td>
-            <td>${req.senderName ?? "—"}</td>
-            <td>${req.recipientName ?? "—"}</td>
-            <td>${getStatusBadge(req.status)}</td>
-            <td><span class="badge badge-gray">${req.vehicleType ?? "—"}</span></td>
-            <td style="font-weight:600">${fmt(amount)}</td>
-            <td><button class="btn btn-outline btn-sm" onclick='viewRequest(${JSON.stringify(req)})'>View</button></td>
-          </tr>`
-            );
+            tbody.insertAdjacentHTML('beforeend', `
+              <tr>
+                <td style="color:var(--muted);font-size:12px">#${req.id}</td>
+                <td><span style="font-weight:600;font-family:monospace;font-size:12px;background:#f0f5f0;padding:3px 7px;border-radius:4px">${req.packageId ?? '—'}</span></td>
+                <td>${req.senderName ?? '—'}</td>
+                <td>${req.recipientName ?? '—'}</td>
+                <td>${getStatusBadge(req.status)}</td>
+                <td><span class="badge badge-gray">${req.vehicleType ?? '—'}</span></td>
+                <td style="font-weight:600">${fmt(amount)}</td>
+                <td><button class="btn btn-outline btn-sm" onclick='viewRequest(${JSON.stringify(req)})'>View</button></td>
+              </tr>`);
           });
-          document.getElementById("countPending").textContent = pending;
-          document.getElementById("countInTransit").textContent = inTransit;
-          document.getElementById("countDelivered").textContent = delivered;
-          document.getElementById("countTotal").textContent = requests.length;
-        } catch (e) {
-          console.error("Error loading requests:", e);
-        }
+
+          document.getElementById('countPending').textContent   = pending;
+          document.getElementById('countInTransit').textContent = inTransit;
+          document.getElementById('countDelivered').textContent = delivered;
+          document.getElementById('countTotal').textContent     = requests.length;
+        } catch(e) { console.error('Error loading requests:', e); }
       }
 
       function logout() {
-        if (!confirm("Log out?")) return;
-        localStorage.removeItem("adminToken");
-        window.location.href = "../login.html";
+        if (!confirm('Log out?')) return;
+        localStorage.removeItem('adminToken');
+        window.location.href = '../login.html';
       }
 
-      document.addEventListener("DOMContentLoaded", loadRequests);
+      document.addEventListener('DOMContentLoaded', loadRequests);
     </script>
   </body>
 </html>

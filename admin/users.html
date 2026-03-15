@@ -7,61 +7,94 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="shared.css" />
     <style>
-      .nav-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.4);
-        z-index: 99;
-      }
-      .nav-overlay.open { display: block; }
+      .nav-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99; }
+      .nav-overlay.open { display:block; }
+      .hamburger { display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text1);align-items:center; }
 
-      .hamburger {
-        display: none;
-        background: none;
+      .modal-overlay {
+        align-items: flex-start;
+        padding: 24px 16px;
+        overflow-y: auto;
+      }
+      .modal { max-height: none; margin: auto; }
+
+      .modal-divider {
+        grid-column: 1/-1;
         border: none;
-        cursor: pointer;
-        padding: 4px;
-        color: var(--text1);
+        border-top: 1px solid var(--border);
+        margin: 4px 0 0;
+      }
+      .modal-section-label {
+        grid-column: 1/-1;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--muted);
+        font-weight: 700;
+        padding-top: 4px;
+      }
+
+      /* Profile / vehicle images */
+      .modal-img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        display: block;
+      }
+      .modal-img-placeholder {
+        width: 100%;
+        height: 72px;
+        background: #f4f4f4;
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        display: flex;
         align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* Driver status card */
+      .driver-status-card {
+        grid-column: 1/-1;
+        border-radius: 8px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .driver-status-card.is-driver  { background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d; }
+      .driver-status-card.not-driver { background:#f9fafb;border:1px solid var(--border);color:var(--muted); }
+
+      /* Vehicle verified indicator */
+      .plate-tag {
+        font-family: monospace;
+        font-size: 13px;
+        font-weight: 700;
+        background: #f0f5f0;
+        padding: 3px 8px;
+        border-radius: 5px;
+        letter-spacing: 1px;
       }
 
       @media (max-width: 768px) {
-        .hamburger { display: flex; }
-
-        .sidebar {
-          position: fixed;
-          left: -260px;
-          top: 0;
-          height: 100%;
-          z-index: 100;
-          transition: left 0.25s ease;
-        }
-        .sidebar.open {
-          left: 0;
-          box-shadow: 4px 0 24px rgba(0,0,0,0.15);
-        }
-
-        .main { margin-left: 0 !important; width: 100%; }
-        .topbar { padding: 0 16px; }
-        .page-content { padding: 16px !important; }
-
-        .section-header {
-          flex-direction: column !important;
-          align-items: flex-start !important;
-          gap: 12px !important;
-        }
-
-        .table-toolbar {
-          flex-direction: column !important;
-          align-items: stretch !important;
-          gap: 10px !important;
-        }
-        .search-box { width: 100%; }
-        .search-box input { width: 100%; }
-
-        .table-wrap { overflow-x: auto; }
-        table { min-width: 520px; }
+        .hamburger { display:flex; }
+        .sidebar { position:fixed;left:-260px;top:0;height:100%;z-index:100;transition:left .25s ease; }
+        .sidebar.open { left:0;box-shadow:4px 0 24px rgba(0,0,0,0.15); }
+        .main { margin-left:0 !important;width:100%; }
+        .topbar { padding:0 16px; }
+        .page-content { padding:16px !important; }
+        .section-header { flex-direction:column !important;align-items:flex-start !important;gap:12px !important; }
+        .table-toolbar { flex-direction:column !important;align-items:stretch !important;gap:10px !important; }
+        .search-box { width:100%; }
+        .search-box input { width:100%; }
+        .table-wrap { overflow-x:auto; }
+        table { min-width:580px; }
+        .modal-overlay { padding:12px 8px; }
       }
     </style>
   </head>
@@ -77,46 +110,38 @@
       <nav class="nav">
         <div class="nav-label">Overview</div>
         <a href="dashboard.html" class="nav-item" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Dashboard
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
         </a>
         <div class="nav-label">Management</div>
         <a href="users.html" class="nav-item active" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Users
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users
         </a>
         <a href="requests.html" class="nav-item" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Delivery Requests
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Delivery Requests
         </a>
         <a href="vehicles.html" class="nav-item" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          Vehicles
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Vehicles
+        </a>
+        <a href="licenses.html" class="nav-item" onclick="closeSidebar()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Driver Licenses
         </a>
         <div class="nav-label">Finance</div>
         <a href="wallets.html" class="nav-item" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
-          Wallets
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Wallets
         </a>
         <a href="banks.html" class="nav-item" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
-          Bank Details
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>Bank Details
         </a>
-        <!-- <div class="nav-label">System</div>
-        <a href="uploads.html" class="nav-item" onclick="closeSidebar()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Uploads
-        </a> -->
       </nav>
       <div class="sidebar-footer">
-<button class="logout-btn" onclick="logout()">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-    <polyline points="16 17 21 12 16 7"/>
-    <line x1="21" y1="12" x2="9" y2="12"/>
-  </svg>
-  Logout
-</button>
+        <button class="logout-btn" onclick="logout()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
       </div>
     </aside>
 
@@ -131,7 +156,7 @@
         </button>
         <div class="topbar-title">Users</div>
         <div class="topbar-right">
-          <span style="font-size: 12px; color: var(--muted); font-weight: 500">Admin</span>
+          <span style="font-size:12px;color:var(--muted);font-weight:500">Admin</span>
           <div class="avatar">A</div>
         </div>
       </div>
@@ -139,28 +164,22 @@
       <div class="page-content">
         <div class="section-header">
           <div>
-            <div class="section-title" style="font-size: 18px">All Users</div>
-            <div style="font-size: 12px; color: var(--muted); margin-top: 2px">
-              Manage registered users and their accounts
-            </div>
+            <div class="section-title" style="font-size:18px">All Users</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Manage registered users and their accounts</div>
           </div>
-          <button class="btn btn-primary" onclick="openModal('userModal')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add User
-          </button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV('usersTable','users')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
         </div>
 
         <div class="table-wrap">
           <div class="table-toolbar">
             <div class="search-box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" placeholder="Search users..." oninput="filterTable(this, 'usersTable')" />
-            </div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-outline btn-sm" onclick="exportCSV('usersTable', 'users')">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export CSV
-              </button>
+              <input type="text" placeholder="Search users..." oninput="filterTable(this,'usersTable')" />
             </div>
           </div>
           <table id="usersTable">
@@ -171,6 +190,7 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Type</th>
+                <th>Role</th>
                 <th>Verified</th>
                 <th>Action</th>
               </tr>
@@ -181,136 +201,336 @@
       </div>
     </div>
 
-    <!-- User Modal -->
-    <div class="modal-overlay" id="userModal">
-      <div class="modal">
-        <div class="modal-title">Add New User</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">First Name</label>
-            <input class="form-input" type="text" placeholder="John" />
+    <!-- View User Modal -->
+    <div class="modal-overlay" id="viewUserModal">
+      <div class="modal" style="max-width:520px;width:100%">
+        <div class="modal-title">User Details</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+
+          <!-- Account -->
+          <div class="modal-section-label">Account</div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Full Name</div>
+            <div id="vFullName" style="font-weight:600"></div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Last Name</label>
-            <input class="form-input" type="text" placeholder="Doe" />
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Account Type</div>
+            <div id="vAccountType"></div>
           </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Email</div>
+            <div id="vEmail" style="word-break:break-all;font-size:13px"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Phone</div>
+            <div id="vPhone"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Verified</div>
+            <div id="vVerified"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Onboarding</div>
+            <div id="vOnboarding"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Joined</div>
+            <div id="vCreatedAt"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Last Updated</div>
+            <div id="vUpdatedAt"></div>
+          </div>
+
+          <!-- Personal -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Personal</div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Gender</div>
+            <div id="vGender"></div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Date of Birth</div>
+            <div id="vDob"></div>
+          </div>
+          <div style="grid-column:1/-1">
+            <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Location</div>
+            <div id="vLocation"></div>
+          </div>
+
+          <!-- Profile picture -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Profile Picture</div>
+          <div style="grid-column:1/-1">
+            <div id="vProfilePicContainer"></div>
+          </div>
+
+          <!-- Driver status -->
+          <hr class="modal-divider" />
+          <div class="modal-section-label">Driver Status</div>
+          <div id="vDriverStatusCard" class="driver-status-card not-driver"></div>
+
+          <!-- Vehicle details — shown only when isDriver -->
+          <div id="vVehicleSection" style="display:none;grid-column:1/-1">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+              <hr class="modal-divider" style="grid-column:1/-1" />
+              <div class="modal-section-label" style="grid-column:1/-1">Vehicle</div>
+
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Make</div>
+                <div id="vVehicleMake" style="font-weight:600"></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Model</div>
+                <div id="vVehicleModel"></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Color</div>
+                <div id="vVehicleColor"></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Capacity</div>
+                <div id="vVehicleCapacity"></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Plate Number</div>
+                <div id="vVehiclePlate"></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px">Vehicle Verified</div>
+                <div id="vVehicleVerified"></div>
+              </div>
+              <div style="grid-column:1/-1;margin-top:4px">
+                <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">Front Picture</div>
+                <div id="vVehicleImgContainer"></div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-input" type="email" placeholder="john@example.com" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Phone</label>
-          <input class="form-input" type="text" placeholder="0801234567" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Account Type</label>
-          <select class="form-input">
-            <option>Personal</option>
-            <option>Business</option>
-          </select>
-        </div>
+
         <div class="modal-actions">
-          <button class="btn btn-outline" onclick="closeModal('userModal')">Cancel</button>
-          <button class="btn btn-primary" onclick="closeModal('userModal')">Add User</button>
+          <button class="btn btn-outline" onclick="closeModal('viewUserModal')">Close</button>
+          <button class="btn btn-danger" onclick="removeCurrentUser()">Remove User</button>
         </div>
       </div>
     </div>
 
     <script>
-      const API_BASE = "../api";
+      const API_BASE = '../api';
+      const IMAGE_URL =
+        window.location.hostname === 'localhost'
+          ? 'http://localhost:6543'
+          : 'https://gudu.teechaa.com';
 
-      function openSidebar() {
-        document.getElementById('sidebar').classList.add('open');
-        document.getElementById('navOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeSidebar() {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('navOverlay').classList.remove('open');
-        document.body.style.overflow = '';
-      }
+      let currentUserId = null;
 
-      function openModal(id) { document.getElementById(id).classList.add("open"); }
-      function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+      function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('navOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+      function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('navOverlay').classList.remove('open'); document.body.style.overflow=''; }
+      function openModal(id) { document.getElementById(id).classList.add('open'); }
+      function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-      document.querySelectorAll(".modal-overlay").forEach((o) => {
-        o.addEventListener("click", (e) => { if (e.target === o) o.classList.remove("open"); });
-      });
+      document.querySelectorAll('.modal-overlay').forEach(o =>
+        o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
+      );
 
       function filterTable(input, tableId) {
         const q = input.value.toLowerCase();
-        document.getElementById(tableId).querySelectorAll("tbody tr").forEach((r) => {
-          r.style.display = r.textContent.toLowerCase().includes(q) ? "" : "none";
+        document.getElementById(tableId).querySelectorAll('tbody tr').forEach(r => {
+          r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
         });
       }
 
       function exportCSV(tableId, name) {
         const table = document.getElementById(tableId);
-        const rows = [...table.querySelectorAll("tr")];
-        const csv = rows.map((r) =>
-          [...r.querySelectorAll("th,td")].slice(0, -1).map((c) => `"${c.textContent.trim()}"`).join(",")
-        ).join("\n");
-        const a = document.createElement("a");
-        a.href = "data:text/csv," + encodeURIComponent(csv);
-        a.download = name + "_export.csv";
+        const rows = [...table.querySelectorAll('tr')];
+        const csv = rows.map(r =>
+          [...r.querySelectorAll('th,td')].slice(0,-1).map(c => `"${c.textContent.trim()}"`).join(',')
+        ).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv,' + encodeURIComponent(csv);
+        a.download = name + '_export.csv';
         a.click();
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const d = new Date(dateStr);
+        return isNaN(d) ? dateStr : d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+      }
+
+      function capitalize(str) {
+        if (!str) return '—';
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+      }
+
+      function buildImage(container, path, altText) {
+        if (path) {
+          const cleanPath = path.replace(/^\/+/, '');
+          const img = document.createElement('img');
+          img.className = 'modal-img';
+          img.src = `${IMAGE_URL}/${cleanPath}`;
+          img.alt = altText;
+          img.onerror = function () {
+            this.parentElement.innerHTML = '<div class="modal-img-placeholder">Image could not be loaded</div>';
+          };
+          container.innerHTML = '';
+          container.appendChild(img);
+        } else {
+          container.innerHTML = '<div class="modal-img-placeholder">No image uploaded</div>';
+        }
+      }
+
+      function viewUser(user) {
+        currentUserId = user.id;
+
+        // Account
+        document.getElementById('vFullName').textContent  = user.fullName || '—';
+        document.getElementById('vEmail').textContent     = user.email || '—';
+        document.getElementById('vPhone').textContent     = user.phoneNumber || '—';
+        document.getElementById('vCreatedAt').textContent = formatDate(user.createdAt);
+        document.getElementById('vUpdatedAt').textContent = formatDate(user.updatedAt);
+
+        document.getElementById('vAccountType').innerHTML = user.accountType === 'BUSINESS'
+          ? `<span class="badge badge-yellow">Business</span>`
+          : `<span class="badge badge-blue">Personal</span>`;
+
+        document.getElementById('vVerified').innerHTML = user.verified
+          ? `<span class="badge badge-green">Verified</span>`
+          : `<span class="badge badge-red">Unverified</span>`;
+
+        document.getElementById('vOnboarding').innerHTML = user.onboardingCompleted
+          ? `<span class="badge badge-green">Complete</span>`
+          : `<span class="badge badge-gray">Incomplete</span>`;
+
+        // Personal
+        document.getElementById('vGender').textContent   = capitalize(user.gender);
+        document.getElementById('vDob').textContent      = formatDate(user.dob);
+        document.getElementById('vLocation').textContent = user.location || '—';
+
+        // Profile picture
+        buildImage(document.getElementById('vProfilePicContainer'), user.profilePicture, 'Profile picture');
+
+        // Driver status card
+        const driverCard = document.getElementById('vDriverStatusCard');
+        if (user.isDriver) {
+          driverCard.className = 'driver-status-card is-driver';
+          driverCard.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            Registered Driver — vehicle, license, bank details &amp; location on file`;
+        } else {
+          driverCard.className = 'driver-status-card not-driver';
+          driverCard.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            Not a registered driver`;
+        }
+
+        // Vehicle section — show only for drivers
+        const vehicleSection = document.getElementById('vVehicleSection');
+        if (user.isDriver && user.vehicle) {
+          vehicleSection.style.display = 'block';
+          const v = user.vehicle;
+
+          document.getElementById('vVehicleMake').textContent     = v.make ?? '—';
+          document.getElementById('vVehicleModel').textContent    = v.model ?? '—';
+          document.getElementById('vVehicleColor').textContent    = v.color ?? '—';
+          document.getElementById('vVehicleCapacity').textContent = v.capacity != null ? v.capacity : '—';
+          document.getElementById('vVehiclePlate').innerHTML      =
+            v.plateNumber ? `<span class="plate-tag">${v.plateNumber}</span>` : '—';
+          document.getElementById('vVehicleVerified').innerHTML   = v.isVerified
+            ? `<span class="badge badge-green">Verified</span>`
+            : `<span class="badge badge-red">Unverified</span>`;
+
+          buildImage(document.getElementById('vVehicleImgContainer'), v.frontPicture, 'Vehicle front picture');
+        } else {
+          vehicleSection.style.display = 'none';
+        }
+
+        openModal('viewUserModal');
+      }
+
+      async function removeCurrentUser() {
+        if (!confirm('Remove this user? This cannot be undone.')) return;
+        try {
+          const res = await fetch(`${API_BASE}/deleteUser.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: currentUserId })
+          });
+          const data = await res.json();
+          if (data.success) { closeModal('viewUserModal'); loadUsers(); }
+          else alert('Failed to remove user: ' + (data.message || ''));
+        } catch(e) { alert('Server error'); }
       }
 
       async function loadUsers() {
         try {
           const res = await fetch(`${API_BASE}/users.php`);
           const users = await res.json();
-          const tbody = document.getElementById("usersBody");
-          tbody.innerHTML = "";
-          users.forEach((user) => {
-            const verifiedBadge = user.verified == 1
+          const tbody = document.getElementById('usersBody');
+          tbody.innerHTML = '';
+          users.forEach(user => {
+            const verifiedBadge = user.verified
               ? `<span class="badge badge-green">Verified</span>`
               : `<span class="badge badge-red">Unverified</span>`;
-            const typeBadge = user.accountType === "BUSINESS"
+            const typeBadge = user.accountType === 'BUSINESS'
               ? `<span class="badge badge-yellow">Business</span>`
               : `<span class="badge badge-blue">Personal</span>`;
-            tbody.insertAdjacentHTML("beforeend", `
+            const roleBadge = user.isDriver
+              ? `<span class="badge badge-green">Driver</span>`
+              : `<span class="badge badge-gray">User</span>`;
+            tbody.insertAdjacentHTML('beforeend', `
               <tr>
                 <td style="color:var(--muted);font-size:12px">#${user.id}</td>
-                <td><div style="font-weight:600">${user.fullName ?? "-"}</div></td>
-                <td style="color:var(--text2)">${user.email ?? "-"}</td>
-                <td>${user.phoneNumber ?? "-"}</td>
+                <td><div style="font-weight:600">${user.fullName ?? '—'}</div></td>
+                <td style="color:var(--text2);font-size:13px">${user.email ?? '—'}</td>
+                <td>${user.phoneNumber ?? '—'}</td>
                 <td>${typeBadge}</td>
+                <td>${roleBadge}</td>
                 <td>${verifiedBadge}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="removeUser(${user.id})">Remove</button></td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-outline btn-sm" onclick='viewUser(${JSON.stringify(user)})'>View</button>
+                    <button class="btn btn-danger btn-sm" onclick="removeUser(${user.id})">Remove</button>
+                  </div>
+                </td>
               </tr>
             `);
           });
-        } catch (error) {
-          console.error("Error loading users:", error);
-        }
+        } catch(e) { console.error('Error loading users:', e); }
       }
 
       async function removeUser(id) {
-        if (!confirm("Remove this user?")) return;
+        if (!confirm('Remove this user?')) return;
         try {
           const res = await fetch(`${API_BASE}/deleteUser.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
           });
           const data = await res.json();
-          if (data.success) { loadUsers(); }
-          else { alert("Failed to remove user"); }
-        } catch (error) {
-          console.error(error);
-          alert("Server error");
-        }
+          if (data.success) loadUsers();
+          else alert('Failed to remove user');
+        } catch(e) { alert('Server error'); }
       }
 
       function logout() {
-  if (!confirm('Log out?')) return;
-  localStorage.removeItem('adminToken');
-  window.location.href = '../login.html';
-}
+        if (!confirm('Log out?')) return;
+        localStorage.removeItem('adminToken');
+        window.location.href = '../login.html';
+      }
 
-      document.addEventListener("DOMContentLoaded", loadUsers);
+      document.addEventListener('DOMContentLoaded', loadUsers);
     </script>
   </body>
 </html>
